@@ -1,31 +1,33 @@
 import { Router } from "express";
 
-const Logger = Router();
+const LoggerRouter = Router();
 
-Logger.get("/info", (req, res) => {
+LoggerRouter.get("/info", (req, res) => {
   req.logger.info(
     '<span style="color:blue">Texto informativo de Info</span><br/>'
   );
   res.send("Hola!");
 });
 
-Logger.get("/warning", (req, res) => {
+LoggerRouter.get("/warning", (req, res) => {
   req.logger.warning('<span style="color:cyan">Texto Warning</span><br/>');
   res.send("Hola!");
 });
 
-Logger.get("/error", (req, res) => {
+LoggerRouter.get("/error", (req, res) => {
   req.logger.error('<span style="color:yellow">Texto Error</span><br/>');
   res.send("Hola!");
 });
 
-Logger.get("/fatal", (req, res) => {
+LoggerRouter.get("/fatal", (req, res) => {
   req.logger.fatal(
     '<span style="color:red">Texto informativo de Info</span><br/>'
   );
   res.send("Hola!");
 });
 
-Logger.get("/testArtillery", (req, res) => {
+LoggerRouter.get("/testArtillery", (req, res) => {
   res.send("Hola desde Artillery");
 });
+
+export default LoggerRouter;
