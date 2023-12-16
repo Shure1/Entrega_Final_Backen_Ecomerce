@@ -196,6 +196,64 @@ cartRouter.put("/:cid/products/:pid", async (req, res) => {
   }
 });
 
+cartRouter.post("/:cid/purchase", async (req, res) => {
+  const { cid } = req.params;
+
+  try {
+    const cart = await cartModel.findById(cid);
+
+    if (cart) {
+      // verificamos el stock y realizar la compra
+      const productsToPurchase = cart.products;
+
+      const purchasePromises = productsToPurchase.map(async (product) => {
+        const productDetails = await productModel.findById(product.id_prod);
+
+        if (productDetails && productDetails.stock >= product.quantity) {
+          // suficiente stock, restamos la cantidad del stock
+          productDetails.stock -= product.quantity;
+          await productDetails.save();
+        } else {
+          // No hay suficiente stock, eliminar el producto del carrito
+          const indexToRemove = cart.products.findIndex(
+            (p) => p.id_prod.toString() === product.id_prod.toString()
+          );
+
+          if (indexToRemove !== -1) {
+            // Filtrar los productos para obtener un nuevo array sin el producto a eliminar
+            cart.products = cart.products.filter(
+              (p) => p.id_prod.toString() !== productDetails.id_prod.toString()
+            );
+          }
+          throw new Error(
+            `No hay suficiente stock para el producto ${product.id_prod}`
+          );
+        }
+      });
+
+      // esperar a que todas las verificaciones de stock se completen
+      await Promise.all(purchasePromises);
+
+      // limpiar el carrito después de la compra
+      cart.products = [];
+      await cart.save();
+
+      res.status(200).send({ respuesta: "Compra exitosa", mensaje: "OK" });
+    } else {
+      res.status(404).send({
+        respuesta: "Error en realizar compra",
+        mensaje: "Carrito no encontrado",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      respuesta: "Error en realizar compra",
+      mensaje: error.message || "Error interno del servidor",
+    });
+  }
+});
+
 cartRouter.delete("/:cid", async (req, res) => {
   const { cid } = req.params;
 

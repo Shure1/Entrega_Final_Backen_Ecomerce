@@ -9,6 +9,9 @@ import cookieParser from "cookie-parser";
 import initializePassport from "./config/passport.js";
 import nodemailer from "nodemailer";
 
+//Logger
+import { addLogger } from "./config/logger.js";
+
 //handlebars
 import { engine } from "express-handlebars";
 
@@ -42,6 +45,7 @@ const app = express();
 const PORT = 4000;
 
 //?MIDDLEWARES
+app.use(addLogger);
 app.use(express.json());
 app.use(cors(corOptions));
 app.use(express.urlencoded({ extended: true })); //para que podamos trabajar con querys largas
