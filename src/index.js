@@ -9,6 +9,9 @@ import cookieParser from "cookie-parser";
 import initializePassport from "./config/passport.js";
 import nodemailer from "nodemailer";
 
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+
 //Logger
 import { addLogger } from "./config/logger.js";
 
@@ -43,6 +46,19 @@ const corOptions = {
 
 const app = express();
 const PORT = 4000;
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Documentacion del curso de Backend",
+      description: "API Coder Backend",
+    },
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`], //** indica una subcarpeta que no me interesa el nombre, *.yaml no me interesa el nombre solo la extension
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
 
 //?MIDDLEWARES
 app.use(addLogger);
@@ -133,6 +149,7 @@ app.get("/static", (req, res) => {
 
 //?RUTAS
 app.use("/", router);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 //?APLICANDO NODEMAILER
 //configuramos el mail que enviara los correos

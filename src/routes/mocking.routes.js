@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getFakerproducts } from "../controllers/mocking.controller";
+import { getFakerproducts } from "../controllers/mocking.controller.js";
 
 const MockingRouter = Router();
 
