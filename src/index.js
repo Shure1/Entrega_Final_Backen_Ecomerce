@@ -7,7 +7,6 @@ import session from "express-session";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import initializePassport from "./config/passport.js";
-import nodemailer from "nodemailer";
 
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
@@ -140,54 +139,9 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/static", (req, res) => {
-  res.render("home", {
-    css: "style.css",
-    js: "home.js",
-  });
-});
-
 //?RUTAS
 app.use("/", router);
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
-
-//?APLICANDO NODEMAILER
-//configuramos el mail que enviara los correos
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "rodriguezelias485@gmail.com",
-    pass: process.env.PASSWORD_EMAIL,
-    authMethod: "LOGIN",
-  },
-});
-
-app.get("/mail", async (req, res) => {
-  /* enviamos el mail */
-  const resultado = await transporter.sendMail({
-    from: "TEST MAIL rodriguezelias485@gmail.com",
-    to: "erodriguezp2@uft.edu",
-    subject: "prueba envio de mail",
-    html: `     
-        <div>
-          <h1>Buenas tardes</h1>
-        </div>
-    
-    
-    `,
-    attachments: [
-      {
-        filename: "hackerman.jpg",
-        path: __dirname + "/public/img/hackerman.jpeg",
-        cid: "hackerman.jpeg",
-      },
-    ],
-  });
-  console.log(resultado);
-  res.send("Email enviado");
-});
 
 app.listen(PORT, () => {
   console.log(`Server on Port ${PORT}`);

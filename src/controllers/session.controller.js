@@ -7,7 +7,7 @@ export const login = async (req, res) => {
       return res.status(401).send({ mensaje: "usuario invalido" });
     }
 
-    //! si segimos con sesiones en bddesto no se borra,si utilizamos JWT si ya que el proposito de usar jwt es no usar sesiones en base de datos
+    //! si segimos con sesiones en bdd esto no se borra,si utilizamos JWT si ya que el proposito de usar jwt es no usar sesiones en base de datos
     /* generamos la sesion */
     /* req.session.user = {
       first_name: req.user.first_name,

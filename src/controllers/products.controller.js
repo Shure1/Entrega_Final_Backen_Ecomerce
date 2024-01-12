@@ -1,10 +1,10 @@
 import { productModel } from "../models/products.models.js";
+import { __dirname } from "../path.js";
 
 export const getProducts = async (req, res) => {
   let { limit, page, sort, category, status } = req.query;
   limit = parseInt(limit) || 10;
   page = parseInt(page) || 1;
-  console.log("llego a products api");
 
   try {
     let paramsPaginate = {
@@ -21,7 +21,6 @@ export const getProducts = async (req, res) => {
         ? (paramsPaginate.sort = { price: 1 })
         : (paramsPaginate.sort = { price: -1 });
     }
-    console.log(consultaQuery);
 
     const prods = await productModel.paginate(consultaQuery, paramsPaginate);
     if (prods) {
@@ -65,9 +64,9 @@ export const postProduct = async (req, res) => {
       category,
     });
     if (prod) {
-      res.status(201).send({ respuesta: "OK", mensaje: prod });
+      return res.status(201).send({ respuesta: "OK", mensaje: prod });
     }
-    res
+    return res
       .status(400)
       .send({ respuesta: "producto ya estaba creado", mensaje: error });
   } catch (error) {
@@ -77,7 +76,41 @@ export const postProduct = async (req, res) => {
         .status(400)
         .send({ error: "producto ya creado llave duplicada" }); //puede suceder cuando se crear un producto con el mismo codigo
     }
-    res
+    return res
+      .status(500)
+      .send({ respuesta: "Error en crear productos", mensaje: error });
+  }
+};
+
+export const postProductWithImage = async (req, res) => {
+  const file = req.file;
+  const { title, description, stock, code, price, category } = req.body;
+
+  try {
+    const prod = await productModel.create({
+      title,
+      description,
+      stock,
+      code,
+      price,
+      category,
+      thumbnails: `${__dirname}/public/img${file.filename}`,
+    });
+
+    if (prod) {
+      return res.status(201).send({ respuesta: "OK", mensaje: prod });
+    }
+    return res
+      .status(400)
+      .send({ respuesta: "producto ya estaba creado", mensaje: error });
+  } catch (error) {
+    if (error.code == 11000) {
+      //error de llave duplicada en mongoose
+      return res
+        .status(400)
+        .send({ error: "producto ya creado llave duplicada" }); //puede suceder cuando se crear un producto con el mismo codigo
+    }
+    return res
       .status(500)
       .send({ respuesta: "Error en crear productos", mensaje: error });
   }
