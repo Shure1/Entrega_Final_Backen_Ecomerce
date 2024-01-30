@@ -33,28 +33,28 @@ const whitelist = ["http://localhost:5173"];
 
 /* revisamos si esta en la lista, si no lo pateamo */
 const corOptions = {
-  origin: function (origin, callback) {
-    /* si se encuentra una conexion o es local */
-    if (whitelist.indexOf(origin) != -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("acceso denegado"));
-    }
-  },
+	origin: function (origin, callback) {
+		/* si se encuentra una conexion o es local */
+		if (whitelist.indexOf(origin) != -1 || !origin) {
+			callback(null, true);
+		} else {
+			callback(new Error("acceso denegado"));
+		}
+	},
 };
 
 const app = express();
 const PORT = 4000;
 
 const swaggerOptions = {
-  definition: {
-    openapi: "3.1.0",
-    info: {
-      title: "Documentacion del curso de Backend",
-      description: "API Coder Backend",
-    },
-  },
-  apis: [`${__dirname}/docs/**/*.yaml`], //** indica una subcarpeta que no me interesa el nombre, *.yaml no me interesa el nombre solo la extension
+	definition: {
+		openapi: "3.1.0",
+		info: {
+			title: "Documentacion del curso de Backend",
+			description: "API Coder Backend",
+		},
+	},
+	apis: [`${__dirname}/docs/**/*.yaml`], //** indica una subcarpeta que no me interesa el nombre, *.yaml no me interesa el nombre solo la extension
 };
 
 const specs = swaggerJSDoc(swaggerOptions);
@@ -74,21 +74,21 @@ app.use("/static", express.static(path.join(__dirname, "/public"))); //me evito 
 
 //?CONEXION A MONGODB
 mongoose
-  .connect(process.env.MONGO_URL)
-  .then(async () => {
-    console.log("BDD conectada");
-    //Filtro -
-    /* const resultado = await cartModel.findOne({
+	.connect(process.env.MONGO_URL)
+	.then(async () => {
+		console.log("BDD conectada");
+		//Filtro -
+		/* const resultado = await cartModel.findOne({
       _id: "64ffd7d6e68f421a1319fd8d",
     }); */
 
-    /* const resultado = await productModel.paginate(
+		/* const resultado = await productModel.paginate(
       { category: "fiambres" },
       { limit: 1, page: 1, sort: { price: "1" } }
     );
     console.log(JSON.stringify(resultado.docs)); */
 
-    /* const resultados = await orderModel.aggregate([
+		/* const resultados = await orderModel.aggregate([
             {
                 $match: { size: 'medium' }
             },
@@ -113,11 +113,11 @@ mongoose
                 }
             }
         ]) */
-  })
-  .catch(() => console.log("Error en conexion a BDD"));
+	})
+	.catch(() => console.log("Error en conexion a BDD"));
 
 //?GUARDAMOS LAS SESIONES EN MONGO
-app.use(
+/* app.use(
   session({
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URL, //es la url que usa useNewUrlParser
@@ -133,7 +133,7 @@ app.use(
     //fuerzo a que la sesion guarde un valor (id) al menos
     saveUninitialized: false,
   })
-);
+); */
 //?USO DE PASSPORT APLICAMOS LA ESTRATEGIA Y MANEJAMOS LAS SESIONES
 initializePassport();
 app.use(passport.initialize());
@@ -144,5 +144,5 @@ app.use("/", router);
 app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.listen(PORT, () => {
-  console.log(`Server on Port ${PORT}`);
+	console.log(`Server on Port ${PORT}`);
 });
