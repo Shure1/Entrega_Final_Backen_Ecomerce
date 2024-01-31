@@ -117,23 +117,23 @@ mongoose
 	.catch(() => console.log("Error en conexion a BDD"));
 
 //?GUARDAMOS LAS SESIONES EN MONGO
-/* app.use(
-  session({
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URL, //es la url que usa useNewUrlParser
-      mongoOptions: {
-        useNewUrlParser: true, //establecemos conexion mediante url
-        useUnifiedTopology: true, //manejo de clusters de manera dinamica, nos conectamos al controlador actual de base de datos
-      },
-      ttl: 60, //duracion de la sesion en la BDD en seg
-    }),
-    secret: process.env.SESSION_SECRET,
-    //fuerzo a que intente guardar a pesar de no tener modificaciones en los datos
-    resave: false,
-    //fuerzo a que la sesion guarde un valor (id) al menos
-    saveUninitialized: false,
-  })
-); */
+app.use(
+	session({
+		store: MongoStore.create({
+			mongoUrl: process.env.MONGO_URL, //es la url que usa useNewUrlParser
+			mongoOptions: {
+				useNewUrlParser: true, //establecemos conexion mediante url
+				useUnifiedTopology: true, //manejo de clusters de manera dinamica, nos conectamos al controlador actual de base de datos
+			},
+			ttl: 60, //duracion de la sesion en la BDD en seg
+		}),
+		secret: process.env.SESSION_SECRET,
+		//fuerzo a que intente guardar a pesar de no tener modificaciones en los datos
+		resave: false,
+		//fuerzo a que la sesion guarde un valor (id) al menos
+		saveUninitialized: false,
+	})
+);
 //?USO DE PASSPORT APLICAMOS LA ESTRATEGIA Y MANEJAMOS LAS SESIONES
 initializePassport();
 app.use(passport.initialize());

@@ -10,7 +10,7 @@ const recoveryLinks = {};
 
 userRouter.get("/", async (req, res) => {
 	try {
-		const users = await userModel.find();
+		const users = await userModel.find().select("first_name email");
 		res.status(200).send({ respuesta: "OK", mensaje: users });
 	} catch (error) {
 		res
@@ -158,6 +158,8 @@ userRouter.post(
 		const { uid } = req.params;
 		const files = req.files;
 
+		console.log("Req.body:", req.body);
+		console.log("Req.files:", req.files);
 		/* creamos un objeto para agregarlo a la bdd como rutas */
 		for (const file of files) {
 			const document = {
